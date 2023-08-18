@@ -1,0 +1,688 @@
+Nos debemos situar en el directorio del nuevo proyecto, para ello abrimos una nueva terminal y le asignamos la ruta del proyecto a realizar.
+
+Debemos chequear las versiones:
+    - python3 --version
+    Python 3.8.10 (en mi caso)
+    - django-admin --version
+    4.0 (en mi caso)
+
+Con el comando:
+    - django-admin startproject <Nombre_del_proyecto>
+
+Se crea un nuevo directorio dentro del directorio del proyecto con el nombre indicado.
+En el vemos el archivo "manage.py" y tambien el archivo "urls.py", ambos son importantes ya que ahí iremos configurando rutas del proyecto y aplicaciones del mismo.
+
+Para levantar el servidor Django ejecutamos el siguiente comando dentro de la carpeta creada con el nombre del proyecto:
+    - cd <Nombre_del_proyecto>
+    - python3 manage.py runserver
+
+Podemos visitar la URL: 127.0.0.1:8000/ para comprobar que Django ha sido inicializado correctamente.
+
+Tambien veremos que nos aparecen mensajes sobre "migraciones", lo que corresponde a actualizaciones de la BD que trae por defecto Django que es SQLite3.
+
+Para ejecutar estas migraciones usaremos el comando:
+    - python3 manage.py migrate
+
+Otra cosa que podemos hacer con Django es habiltarlo para que sea accesible desde otras maquinas, simulando un entorno productivo.
+
+Para ello editamos el archivo "settings.py" en el apartado:
+    - DEBUG = True // Lo cambiamos por DEBUG = False
+
+Y en la linea siguiente, en ALLOWED_HOST = [], agregamos las IPs: "127.0.0.1", "IP_DE_LA_MAQ_LOCAL", luego reiniciamos el servidor en Django con el siguiente comando:
+    - python3 manage.py runserver 0.0.0.0:<Puerto_a_utilizar>
+
+El puerto puede ser el 80, si es HTTP, 443, si el por HTTPS o el 8000 como en este caso.
+
+El comando quedaria asi: python3 manage.py runserver 0.0.0.0:8000
+
+La clave que figura en el archivo "settings.py" no es segura para ambientes de PROD, por lo que la documentacion sugiere usar archivos externos, el archivo que contendrá la clave puede estar en cualquier directorio, por ej.: /etc/ , bajo el nombre "secret_key.txt"
+
+Entonces para leerlo, debemos comentar la linea "SECRET_KEY" y escribir bajo ella:
+    with open('<RUTA_DONDE_ESTA_EL_ARCHIVO>/<ARCHIVO_SECRETO>.txt') as f:
+        SECRET_KEY = f.read().strip()
+
+Otra forma que sugiere la documentacion es hacer uso de variables de ambiente:
+Importamos la librería de sistema operativo:
+    - import os (sobre la linea que dice "from pathlib import Path")
+
+Y en la seccion de la clave secreta, ponemos SECRET_KEY = os.environ['SECRET_KEY']  // Esta clave debe estar creada en el Sist. Operativo, de lo contrario fallará la compilación y no permitirá su inicializacion.
+
+
+Con python podemos crear un servidor, al igual que con Django, pero es totalmente inseguro.
+La forma de realizarlo es la siguiente:
+    - python3 -m http.server
+La opcion "-m" nos ayudará a leer todas las solicitudes del servidor.
+
+Mostrará la URL 0.0.0.0:8000/ lo que indica que está visible desde cualquier punto de nuestra red y visualizará los archivos como un FTP.
+
+Django tiene por defecto en su documentacion la forma de conectar a ciertas BDs, tales como:
+- Postgresql
+- MariaDB
+- MySQL
+- Oracle
+- SQLite (viene por defecto)
+
+Otros motores de BD, son mantenidos por el proveedor de la BD como el caso de SQL-Server (Windows), CockroachDB, FireBird
+
+La configuracion de la BD se realiza en el archivo "setings.py"
+
+La creacion de un entorno virtual obedece a que puede ser que una version nueva de python depreque funciones de la version actual y eso deje sin funcionar algunas de nuestras aplicaciones, para ello con el comando:
+    - sudo pip3 install virtualenvwrapper // Ayuda a generar mini-ambientes de python
+
+Así podemos encapsular los proyectos, cada uno bajo su propia version de Python, lo mismo ocurre con Django.
+
+Una vez instalado procedemos a ejecutar el comando "mkvirtualenv <Nombre_del_ambiente_virtual>"
+
+Si aparece algun error que el comando "mkvirtualenv" no esta encontrado debemos agregarlo a una variable global de la siguiente forma:
+
+- export <Nombre_De_Variable>=~<directorio_donde_quedara_el_ambiente_virtual>
+# export TRABAJOVIRTUAL=~/Envs
+
+Creamos un directorio llamando la variable recien creada:
+- mkdir - p $TRABAJOVIRTUAL
+- source /usr/local/bin/virtualenvwrapper.sh
+
+Solo falta agregar una variable la que se llama "VIRTUALENVWRAPPER_PYTHON" y asignarle su directorio:
+
+$> VIRTUALENVWRAPPER_PYTHON=/usr/bin/python3
+
+Volvemos a ejecutar el comando "source":
+    - source /usr/local/bin/virtualenvwrapper.sh
+
+Debería ejecutarse sin problemas.
+
+Luego procedemos a crear el ambiente virtual:
+    - mkvirtual django_virtual
+
+Y debería aparecer algo similar a esto:
+
+(django_virtual)ext_acvalenzuela@xxxx $> _
+
+Esto nos indica que el ambiente virtual fue creado y que nos encontramos dentro de él (por los parentesis).
+
+workon: nos lista todos los ambientes virtuales que poseo.
+workon <nombre_de_ambiente>: me cambia de un ambiente a otro.
+
+Estos ambientes no se molestan entre sí, pudiendo tener versiones de Python diferentes.
+
+Una vez dentro del Amb-Virtual, instalaremos django para poder ejecutar nuestro proyecto.
+    - (xxx)ext_acv...@xxx> pip3 install django
+
+Una vez instalado veremos la version instalada:
+    - python3 -m django --version
+
+Con lo cual ya podemos crear el directorio que contendrá nuestro proyecto.
+    - mkdir ServerVirtual
+    - cd ServerVirtual
+    - django-admin startproject <Nombre_del_Proyecto>
+    - cd <Nombre_del_Proyecto>
+    - python3 manage.py runserver
+
+Para salir del ambiente virtual debemos usar el comando: $> deactivate //debería desaparecer el nombre contendido dentro de los parentesis, lo que indica que nos salimos del amb-virtual, volviendo al amb. global.
+
+###########################################################################################
+
+Agregar aplicaciones dentro de un proyecto.
+
+Nos debemos situar en el directorio de nuestro proyecto y luego, desde la linea de la terminal realizamos la ejecución del siguiente comando:
+
+    - python3 manage.py startapp <<Nombre_De_Aplicacion>>
+
+Una vez creada la nueva aplicacion, debemos editar el archivo "settings.py" dentro de la carpeta del proyecto.
+
+En la seccion "INSTALLED_APPS", debemos agregar la siguiente linea:
+    - '<nombre_app> .apps. <nombre_clase>'
+
+Reiniciamos el servidor de Django y de esta forma le informamos al servidor la agregación de una nueva aplicacion.
+
+Continunando con la configuracion de la aplicacion, debemos crear un archivo llamado "urls.py", dentro de la aplicacion y lo editamos de la siguiente forma:
+
+from django.urls import path
+from . import views
+
+urlpatterns = [
+    path('<nombre_de_app>/', views.<nombre_metodo_a_llamar>),   ## el nombre la app puede estar vacío si queremos que cargue de forma directa
+]
+
+Con esto se indica que al momento de cargar la aplicacion, se irá a llamar el metodo indicado en el path.
+
+Como el archivo "views.py" está vacío deberemos crear un metodo con el nombre para poder visualizarlo.
+
+Como forma de orden, debemos crear dentro de la aplicacion un directorio llamado "templates" y dentro de él otro con el nombre de la app. (templates/<nombre_de_app>)
+
+Luego deberemos crear un archivo html con el nombre del metodo y este debe ser invocado desde la vista de la aplicacion.
+    - return render(request, '<nombre_app>/<nombre_archivo_html>.html)
+
+Por ultimo debemos editar el archivo "urls.py" del proyecto.
+
+Aquí debemos, de forma similar al paso anterior, indicar que sucede si la URL viene vacía o si se llama a un recurso.
+En el caso de venir vacío el request, debe configurarse de la siguiente forma:
+
+urlpatterns = [
+    path('admin', admin.site.urls),   ## declaración que viene por defecto, para la aplicación de "admin" del sitio web
+    path('', include('<nombre_de_app>.url)),  ## declaracion de la URL vacía, indica que debe cargar todos los metodos creados en la aplicación <nombre_de_app>
+
+    path('<nombre_de_app>/', include('<nombre_de_app>.url)),  ## declaracion URL no-vacía, indica que debe cargar todos los metodos creados en la aplicación <nombre_de_app>
+]
+
+Si deseamos que al cargar la pagina, muestre el aplicativo de forma directa debe dejarse en blanco ambas declaraciones en los respectivos archivos "urls.py"
+
+Por lo tanto, cada vez que se agregue una app nueva al proyecto deberemos:
+    - crear el archivo "urls.py"
+    - declarar las funciones o metodos que poseerá y la forma de acceso ( path('', views.crear_usuario), )
+
+Recordemos que las funciones o metodos invocados de la vista, deben estar declarados en el archivo "views.py".
+
+Para unir los ultimos puntos tratados, el archivo "urls.py", se invoca al metodo "crear_usuario", el cual debe estar descrito en el archivo "views.py", de la misma app.
+
+
+Ahora veremos pasos de parametros por URL
+
+GET:
+    Mediante enlaces, podemos enviar parametros a traves de la URL, en el index.html podemos poner un enlace que pase como parametro un dato, puede ser valor o variable.
+    - Ej.: <a href="recibir?data=5">Enlace a la pagina Recibir.HTML</a>
+
+entonces veremos en la URL lo siguiente: localhost:/8000/recibir/?data=5
+
+Para mostrar por consola, lo que queremos pasar, basta con realizar un print del request, con el metodo GET (print(request.GET)), esto imprmime un diccionario.
+<QueryDict: {'data': ['5']}
+
+Entonces podemos manipular la información, para imprimir el dato basta la instruccion "print(request.GET["data"]) y esto mostrará el valor 5, en la consola.
+
+Para mostrar la info que viene retornada desde la vista al index escribirse en doble parentesis de llave {{ xxx }}
+
+La forma de mostrar la info puede ser por GET o POST y debe ser agregada al final, en forma de diccionario al render que se retorna.
+
+Ej.:
+    views.py
+    return render(request, '<nombre_de_app>/<nombre_de_pagina>.html,{diccionario})
+
+    <nombre_de_pagina>.html
+    {{ nombre_de_campo_de_diccionario }}
+
+Para enviar dos o mas datos por GET, debemos modificar en el archivo "urls.py" la forma en que se generará la url.
+
+Para 2 numeros y retorno de la suma de ambos:
+    urls.py
+    path('<nombre_de_metodo>'/<int:numero1>/<int:numero2>/',views.<nombre_de_metodo>)
+
+
+Creacion del SuperUsuario - Admin:
+
+Ejecutamos la instrucción:
+    python3 manage.py createsuperuser
+
+Y completamos:
+    El nombre de usuario, en caso de presionar enter y dejarlo en blanco, toma como dato el nombre de usuario de la maquina, en este caso podría ser "ext_acvalenzuela"
+
+Luego levantamos en servidor y validamos las credenciales del usuario recien creado.
+
+
+Creemos un modelo (de BD)
+
+Usaremos el archivo "models.py".
+
+Como la base que viene por defecto es SQLite3, se trabajará en ella.
+
+se debe crear una clase, con el primer caracter del nombre de la clase en mayuscula.
+
+    class Usuario(models.Model): ## models.Model indica que la clase se transformará en una tabla de la BD, en caso de no agregar el parametro, no se podrá realizar la migracion.
+
+La clase SIEMPRE se debe declarar en SINGULAR.
+
+Los datos/campos del modelo, deben especificarse de la siguiente forma:
+
+    rut = models.CharField(max_length=10, unique=True) ## Campo RUT, de largo 10 y de valor unico
+    nombre = models.CharField(max_length=50)
+    apellido = models.CharField(max_length=50)
+
+Una vez hecha la tabla, debemos realizar la migración:
+    python3 manage.py makemigrations
+    - Nos indica que se ha creado la tabla del modelo Usuario
+
+    python3 manage.py migrate
+    - Confirma y aplica la creación de la tabla.
+
+
+Para realizar la manipulación de la tabla debemos modificar el archivo "admin.py" de la aplicacion
+
+Previamente, debemos agregar la linea "from .models import Usuario" ## del archivo models que se encuentra en la misma app (por eso el .models) importamos la clase Usuario
+
+Luego, en cuerpo del archivo, agregamos la data a administrar/manejar.
+
+"admin.site.register(Usuario)"
+
+Con lo hasta ahora visto podemos manipular datos a través del administrador de Django.
+
+Para poder interactuar entre la vista y el modelo, debemos importar la clase desde el modelo.
+    views.py:
+    from .models import Usuario
+
+En el metodo, debemos conectar a la BD, con la instruccion:
+    <nombre_variable> = Usuario.objects.all() ## Trae o selecciona todos los datos de la tabla Usuario
+
+Luego pasaremos el contenido de la variable como un diccionario a la vista.
+
+En la vista, podemos aplicar ciclos de iteracion, para ello basta poner la sentencia entre {% %} y cerramos con {% end<cilco> %}
+
+Ej.:
+    {% for variable in data_que_viene_de_views.py %}
+        {{ instrucciones }}
+    {% endfor %}
+
+
+Tambien se pueden poner instrucciones de condicionales dentro de los ciclos.
+
+ Pero antes modificamos la clase Usuario y le agregamos el campo edad:
+    edad = models.IntegerField()
+
+Los campos deben estar declarados SIN coma al final de la linea.
+    rut = models.CharField(max_length=10, null=False)
+    nombre = models.CharField(max_length=50, null=False)
+    apellido =  models.CharField(max_length=100, null=False)
+    edad =  models.IntegerField(max_length=10, null=False)
+
+Una vez modificada la tabla, se deben confirmar las migraciones (makemigrations <<nombre_aplicacion>>)
+Podemos indicar el tipo de dato inicial de los campos de la tabla.
+
+En el caso que queramos saber que usuarios son mayores de 18 años, podemos escribir un codigo
+{% for user in usuario %}
+    {% if user.edad >= 18 %}
+        <<instrucciones>>
+    {% endif %}
+{% endfor %}
+
+
+Para ver el contenido de las paginas debemos crear un directorio static dentro de la app y dentro de ella los directorios css, img, js, etc. o bien el directorio assets y dentro de el todos los mencionados.
+
+Ahora, una vez hecho lo anterior, en el archivo HTML debemos poner lo siguiente al inicio del codigo:
+
+{% load static %}
+<!DOCTYPE html>
+...
+
+Para cargar los enlaces a CSS, JS e IMG debemos escribirlos de la siguiente forma:
+
+<link src / href = "{% static 'path/al/archivo/a/cargar/.xxx %}" >
+
+Para que funcione lo anterior debemos modificar el archivo "settings.py" del proyecto.
+Agregando lo siguiente:
+    TEMPLATES = [
+            ...
+            ...
+            OPTIONS : {
+                context_procesor: [
+                ...
+                ],
+                'libraries': {
+                    'staticfiles': 'django.templatetags.static'
+                }
+            }
+    ]
+
+
+Ahora vamos a realizar el uso de un template generico, para no tener que estar replicando código entre las diferentes aplicaciones.
+
+En la app debemos crear un archivo "layaout.html", en él se irán cargando las diferentes "secciones" al navegar por la pagina web.
+
+Para ello, el codigo que debemos poner, en la seccion cargar es:
+
+<body>
+...
+    {% block content %}
+
+    {% endblock}
+...
+</body>
+
+En el resto de las vistas solo deberemos dejar la seccion que se queremos mostrar.
+
+Pero agregaremos, en la primera linea el comando:
+    {% extends '<aplicacion>/layout.html %}
+        <codigo HTML>
+    {% endblock %}
+
+Si queremos que se muestre contenido estatico se debe dejar en primera linea el comando {% load static %} en la pagina "layout.html", ya que todas las otras paginas derivaran de ella.
+
+
+Formularios
+
+En HTML, cuando no se especifica el campo "action", el formulario se re-envía a la misma página.
+Cuando no se especifica el metodo de envío, por defecto lo realiza por el metodo GET.
+
+Puede enviarse un formulario por metodo GET (vía URL) o POST (de forma oculta)
+
+Un formulario en Django es importante, debido a que se dibujan solos, no es necesario el tag HTML.
+
+Realizaremos un ejercicio con GET:
+
+En el form, creamos un action llamado 'action="crearNuevoUsuario"'   ## /recibirReclamo
+(En nuestro caso es sin "/")
+
+En "urls.py" dejamos el nuevo path "path('crearNuevoUsuario', views.crear_nuevo_usuario)" ## recibirReclamo views.reclamo
+
+En "views.py" trabajamos en nuestro metodo "crear_nuevo_usuario" ## def reclamo(request):
+
+    def crear_nuevo_usuario(request):
+        url = 'crear'
+        datos = request.GET
+        usuario = datos['usuario']
+        nombre = datos['nombre']
+        apellido = datos['apellido']
+        email = datos['email']
+        clave = datos['clave']
+        clave2 = datos['clave2']
+        print(datos, usuario, nombre, apellido, email, clave, clave2)
+        return render(request, 'crear/crear.html',{'datos': datos, 'url': url, 'mensaje': 'Datos enviados correctamente'})
+
+
+Metodo POST
+
+No basta con cambiar en el formulario de HTML, GET por POST.
+Se debe validar el campo CSRF (que valida que no se inyecte codigo por formulario)
+
+Dentro del formulario, en cualquier parte debe agregarse la linea:
+    {% csrf_token %}
+
+En la vista, en la definicion del metodo bastará con cambiar .GET por .POST
+
+
+Dentro de los formularios de django, podemos tener formularios creados por la plataforma y no creados por HTML como en ejemplo.
+
+Para ello debemos crear un archivo llamado "forms.py", aqui estarán los formularios que queremos que administre django.
+
+Este archivo deberá tener la siguiente estructura:
+
+from django import forms             ## importamos la clase forms
+from django.db.models import fields  ## es para indicar al formulario los campos que deberá crear
+
+## declaramos una clase para tener como base del formulario
+
+class IngresarUsuario(forms.Form): ## ReclamoForm(forms.Form)
+    usuario = datos['usuario'] ## email = forms.CharField(widget = formsEmailInput)
+    nombre = datos['nombre']   ## reclamo = forms.CharField(widget = forms.Textarea)
+    apellido = datos['apellido']
+    email = datos['email']
+    clave = datos['clave']
+    clave2 = datos['clave2']
+
+
+Una vez realizada la declaración de tipos en el forms.py, debemos importar en la vista el uso del formulario.
+
+En "views.py" debemos agregar la linea:
+from .forms import <<Nombre_de_la_clase>> ## ReclamoForm
+
+Como ejemplo, se crea otro formulario (reclamo2(request))
+
+def reclamo2(request):
+    form = ReclamoForm(data = request.POST)
+    ## podemos asignar los campos a variables
+    email = form["email"]
+    reclamo = form["reclamo"]
+
+    return render(request, 'catalogo/reclamoejemplo.html', {'form': form})
+
+Creamos el archivo "reclamoejemplo.html" y hacemos que extienda del template creado.
+
+{% extends ... %}
+{% block content %}
+
+    ## este comando dibuja el formulario sin HTML
+    {{form.as_p}} ## form es el nombre del campo en el diccionario que se envia por parametro
+
+{% end block %}
+
+Agregamos el formulario a las URLS (urls.py) 
+
+Luego, en la definicion del metodo que procesa al formulario, tendremos un codigo similar al siguiente:
+
+def reclamo2(request):
+    if request.method == 'POST': ## Si el metodo es POST
+        form = ReclamoForm(data = request.POST)
+        email = form["email"]
+        reclamo = form["reclamo"]
+
+Si el metodo es POST, entonces podemos rescatar los campos del formulario de la forma ya vista antes.
+
+En caso contrario, si el metodo de envío no es POST, lo que hacemos es crear un formulario vacio.
+
+    else:
+        form = ReclamoForm()
+
+Y retornamos el dato.
+
+Django nos dibuja el formulario, con la salvedad de que nos falta el boton de envío, ese sí debe ir por etiqueta html.
+
+Entonces el código, en el nuevo formulario nos quedaría algo así:
+
+"reclamoejemplo.html";
+{% extends ... %}
+{% block content %}
+
+<form action="reclamov2" method="POST">
+    <!-- token de seguridad -->
+    {% csrf_token %}
+    {{ form.as_p }}
+
+    <button>Enviar</button>
+</form>
+
+{% endblock %}
+
+Aqui ya tenemos listo nuestro formulario.
+
+Y nuestro codigo del metodo se verá así:
+def reclamo2(request):
+    if request.method == 'POST': ## Si el metodo es POST
+        form = ReclamoForm(data = request.POST)
+        email = form["email"]
+        reclamo = form["reclamo"]
+        return render(request, 'catalogo/reclamoejemplo.html', {'respuesta': 'ok'})
+    else:
+        form = ReclamoForm()
+        return render(request, 'catalogo/reclamoejemplo.html', {'form': form})
+
+TODAS LAS VISTAS NECESITAN UN RENDER, SE DEBE RETORNAR ALGO.
+
+
+La necesidad de que django nos dibuje un formulario, se debe a que no siempre le daremos permisos a un administrador a que manipule la informacion a traves del super user, para ello se debe especificar la clase sobre la cual debe trabajar.
+
+Este paso se realiza con el siguiente código:
+class AgregaNuevoUsuarioForm(forms.ModelForm):
+    class Meta:
+        model = Usuario
+
+Esta clase debe ser importada en el archivo "forms.py"
+
+from .models import Usuario
+
+Si se desea especificar los campos a utilizar en el formulario, se debe agregar el campo "fields", en la clase Meta.
+En nuestro caso se solicitarán todos los campos, por eso debemos detallarlos todos.
+        fields = ('usuario', 'nombre', 'apellido', 'mail', 'clave', 'clave2')
+
+No se debe especificar el tipo de datos, ya que esto lo obtiene directamente desde la clase models.
+
+El metodo que se encargará de almacenar los datos en la BD, deberá comportarse de la siguiente forma:
+
+def clientes2(request):
+    if request.method == 'POST':
+        form = ClienteForm(data = request.POST)
+        if form.is_valid():  ## consultamos si el formulario es valido
+            cliente = form.save(commit = False) ## No guardamos en formulario de inmediato - queda en memoria
+            cliente.save()  ## Esta linea hace que se guarde en la BD.
+        return redirect('/clientes')  ## no retornamos un dibujo de algo, sino que redireccionamos a la URL clientes, la cual lista a todos los usuarios.
+
+
+## LOGIN:
+
+Vamos a crear un formulario que sea capaz de registrar tanto a usuarios del admin, como al superuser.
+
+Para ello vamos a crear un formulario (en "forms.py"), el cual nos solicitará nombre y password.
+
+class Login(forms.Form):
+    nombre = forms.CharField(widget = forms.TextInput)
+    password = forms.CharField(widget = forms.PasswordInput)
+
+Una vez creado el formulario, se procede a crear el template HTML, llamado tambien login.html
+
+En el formulario HTML solo se debe declarar la etiqueta FORM.
+
+{% extends '../....html' %}
+{% block content %}
+    <form action="<<nombreAccion>> method="POST">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button>Login | Ingresar</button>
+    </form>
+{% endcontent %}
+
+Luego en "urls.py" se debe declarar el path de login.
+
+La definición del metodo login tambien debe establecerse en "views.py"
+En caso que no reconozca la funcion o metodo LoginForm, esta debe importarse desde el modelo (*)
+Tambien debemos importar el metodo de autenticación, el auth_login. (**)
+
+
+from .models import LoginForm (*)
+from django.contrib.auth import authenticate, login as auth_login (**)
+    def login(request):
+        if request.method == 'POST':
+            form = LoginForm(data = request.POST)
+            usuario = form.cleaned_data["nombre"]
+            clave = from.cleaned_data["password"]
+            user = authenticate(request, username = usuario, password = clave) ## user es un objeto devuelto si exite usuario/clave en la tabla admin, en caso contrario devuelve "None"
+            if user in not None:
+                auth_login(request, user)   ### Realizamos el paso (**) para no confundir al aplicativo que llame al metodo login de django
+            return render(request, 'home/my_profile.html', {"user": user})
+        else:
+            form = LoginForm()
+            return render(request, 'home/login.html', {"form": form})
+
+El objeto devuelto se puede recuperar en cualquier parte del aplicativo.
+{{ user.username }} o
+{{ request.user.username }}
+
+
+Siguiendo con el ejemplo anterior, si se desea que solo los usuarios registrados tengan accesos a ciertas URLs vamos a importar decoradores para bloquear el acceso a ciertas URLs para que solo puedan ingresar usuario registrados (logeados).
+
+from django.contrib.auth.decorators import login_required
+
+Entonces para bloquear la vista, basta con poner la siguiente linea por sobre el metodo:
+
+@login_required(login_url = "/login")  ## esta sentencia solicita como parametro, indicar donde debe ser redirigido una solicitud de visita a la URL sin estar registrado
+def my_profile(request):
+    return render(request, 'home/my_profile.html')
+
+
+## LOGOUT:
+Continuando con el sistema de logueo, debemos agregar la librería "logout" para poder cerrar sesión.
+
+from django.contrib.auth import authenticate, login as auth_login, logout
+
+Luego creamos en metodo de cierre de sesión.
+
+def salir(request):
+    logout(request)
+    return redirect("/login")  ## El metodo salir puede redirigir a cualquier vista.
+
+Debemos agregar la url tambien en "urls.py"
+    path('login', views.login),
+    path('my_profile', views.my_profile),
+    path('salir', views.salir),
+
+
+Supongamos que no queremos iniciar sesión con las tablas User integrada con Django, sino que con nuestras propias tablas.
+
+Para esto debemos crear en la aplicación un nuevo archivo, llamado "backend.py".
+
+En su interior debe tener algo como el siguiente código.
+
+
+from django.contrib.auth.backends import BaseBackend
+from django.conf import settings  ## con esto indicaremos que tendremos 2 metodos de autenticación diferentes, para que funcione el ADMIN y permita logearnos con nuestras propias tablas.
+
+
+class MyBackend(BaseBackend):
+    def authenticate(self, request, username = None, password = None):
+        pass
+
+    def get_user(self, user_id):
+        pass
+
+
+Para que funcione esta nueva configuración, debemos editar el archivo "settings.py", agregando la siguiente linea al final
+
+AUTHENTICATION_BACKENDS = [ 'home.backend.MyBackend', 'django.contrib.auth.backends.ModelBackend']
+
+Esta linea nos permitirá utilizar tanto el login propio de django, como el inicio de sesion de nuestra propia implementación.
+
+Para poder realizar nuestro propio login, vamos a indicar que haremos uso del modelo.
+
+from .models import Usuario
+
+Y nuestro primer metodo nos queda:
+    def authenticate(self, request, username = None, password = None):
+        try:
+            usuario = Usuario.objects.filter(rut = username, password = password).get()
+            return usuario
+        except:
+            return None
+
+
+    def get_user(self, user_id):
+        try:
+            return Usuario.objects.get(pk = user_id)
+        except Usuario.DoesNotExist:
+            return None
+
+
+Con los metodos ya definidos podemos definir un login con una tabla externa, distinta a la tabla User que viene integrada con django.
+
+Entonces, ahora debemos crear una instancia de la clase recien creada en el archivo "views.py", antes de la declaración de todos los metodos, entre las librerías y los metodos.
+
+mybackend = MyBackend()
+
+Y podemos crear un 2do metodo login, para no eliminar el ya creado.
+
+Ej.:
+
+def login2(request):
+    if request.method == 'POST':
+        form = LoginForm(data = request.POST)
+        if form.is_valid():
+            usuario = form.cleaned_data["nombre"]
+            clave = form.cleaned_data["password"]
+            user = mybackend.authenticate(request, username = usuario, password = password)
+            if user is not None:
+                auth_login(request, user)
+        return render(request, 'home/my_profile.html', {"user": user})
+    else:
+        form = LoginForm()
+        return render(request, 'home/login.html', {"form": form})
+
+Con esto ya estamos en condiciones de realizar login con una tabla independiente a las integradas en django.
+
+Si desearamos crear otro login, con otra tabla, se recomienda crear una nueva clase dentro del archivo "backend.py"
+
+
+Permisos de Admin de Django:
+
+Debemos ingresar como SuperUser al admin de django.
+Ahi podremos crear Grupos y Usuarios que podrían administrar nuestras diversas aplicaciones, dentro del proyecto.
+
+En resumen,
+Creamos un grupo y le asignamos los permisos administrativos.
+Luego creamos un usuario y lo asignamos el grupo.
+Debemos hacerlo parte del Staff, para que pueda ingresar al admin.
+
+Vamos a revisar la gestion de usuarios dentro del admin de django.
+Vamos al menu de user:
+    - podemos crear un usuario nuevo, elegimos nombre y contraseña
+    - podemos cambiar la contraseña del SuperUsuario sin tener que re-ingresar al sitio como en otros lugares
+    - podemos asignar roles y privilegios a los usuarios dentro de grupos
+
+
+
+
+
+

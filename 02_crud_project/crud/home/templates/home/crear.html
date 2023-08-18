@@ -1,0 +1,22 @@
+{% extends '../home/layout.html' %}
+{% block content %}
+<div class="container mt-4 mb-4">
+    {% if url == "crear" %}
+    <h2 class="text-center">Ejemplo de Creación de un Usuario</h2>
+    <p class="text-center">Formulario de Registro</p>
+    {% elif url == "actualizar" %}
+    <h2 class="text-center">Ejemplo de Actualizar Datos de un Usuario</h2>
+    <p class="text-center">Actualización de Registros de Usuarios</p>
+    {% endif %}
+    <form class="row g-3" method="post" id="formularioCrear" name="formularioCrear">
+        {% csrf_token %}
+        {{ form.as_p }}
+        {% if url == "crear" %}
+        <button class="btn btn-success btn-sm" type="submit" name="button">Enviar Datos</button>
+        <button class="btn btn-danger btn-sm" type="reset" name="button">Borrar Datos</button>
+        {% else %}
+        <button class="btn btn-warning btn-sm" type="submit" name="button">Actualizar Datos</button>
+        {% endif %}
+    </form>
+</div>
+{% endblock %}

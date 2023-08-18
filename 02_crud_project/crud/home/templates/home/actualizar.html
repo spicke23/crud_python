@@ -1,0 +1,27 @@
+{% extends '../home/layout.html' %}
+{% block content %}
+            <h2 class="text-center">Ejemplo de Actualizar Datos de un Usuario</h2>
+            <p class="text-center">Actualización de Registros de Usuarios</p>
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th scope="col">ID</th>
+                        <th scope="col">RUT de Usuario</th>
+                        <th scope="col">Nombre</th>
+                        <th scope="col">Apellido</th>
+                        <th scope="col">Acción</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in usuarios %}
+                    <tr>
+                        <td>{{ user.id }}</td>
+                        <td>{{ user.rut }}</td>
+                        <td>{{ user.nombre }}</td>
+                        <td>{{ user.apellido }}</td>
+                        <td><a class="btn btn-warning btn-sm" href="../actualizarDatosUsuario/{{ user.id }}" role="button">Actualizar</a></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+{% endblock %}

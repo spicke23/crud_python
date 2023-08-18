@@ -1,0 +1,25 @@
+{% extends '../home/layout.html' %}
+{% block content %}
+<div class="container mt-4 mb-4">
+    <h2 class="text-center">Ejemplo de creación de un usuario</h2>
+    <p class="text-center">Formulario de Registro</p>
+    <form class="row g-3" action="procesarNuevoUsuario" method="post" id="formularioCrear" name="formularioCrear" onsubmit="return ValidaFormulario();">
+        <div class="col-12">
+            <label class="form-label" for="usuario">RUT de Usuario</label>
+            <input class="form-control" type="text" name="rut" id="rut" value="">
+        </div>
+        <div class="col-6">
+            <label class="form-label" for="nombre">Nombre</label>
+            <input class="form-control" type="text" name="" id="nombre" value="">
+        </div>
+        <div class="col-6">
+            <label class="form-label" for="apellido">Apellido</label>
+            <input class="form-control" type="text" name="" id="apellido" value="">
+        </div>
+        <div class="col-12 mt-2">
+            <button class="btn btn-success" type="submit" name="button">Enviar Datos</button>
+            <button class="btn btn-danger" type="reset" name="button">Borrar Datos</button>
+        </div>
+    </form>
+</div>
+{% endblock %}

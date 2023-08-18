@@ -1,0 +1,25 @@
+{% extends '../home/layout.html' %}
+{% block content %}
+<div class="container mt-4 mb-4">
+    <h2 class="text-center">Ejemplo de Actualización de un Usuario</h2>
+    <p class="text-center">Formulario de Registro</p>
+    <form class="row g-3" method="post" id="formularioActualizar" name="formularioActualizar">
+        {% csrf_token %}
+        <div class="col-12">
+            <label class="form-label" for="usuario">RUT</label>
+            <input class="form-control" type="text" name="" id="usuario" value="{{ usuario.rut }}">
+        </div>
+        <div class="col-6">
+            <label class="form-label" for="nombre">Nombre</label>
+            <input class="form-control" type="text" name="" id="nombre" value="{{ usuario.nombre }}">
+        </div>
+        <div class="col-6">
+            <label class="form-label" for="apellido">Apellido</label>
+            <input class="form-control" type="text" name="" id="apellido" value="{{ usuario.apellido }}">
+        </div>
+        <div class="col-12 mt-2">
+            <button class="btn btn-warning" type="submit" name="button">Actualizar Datos</button>
+        </div>
+    </form>
+</div>
+{% endblock %}
